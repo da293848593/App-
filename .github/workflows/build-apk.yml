@@ -1,0 +1,39 @@
+name: Build Meal Planner APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'MealPlanner-v3-Enhanced-UI.zip'
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Unpack Android project
+        run: unzip -q MealPlanner-v3-Enhanced-UI.zip
+
+      - name: Build APK
+        working-directory: MealPlanner-v3
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MealPlanner-APK
+          path: MealPlanner-v3/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
