@@ -2,10 +2,6 @@ name: Build Meal Planner APK
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'MealPlanner-v3-Enhanced-UI.zip'
-      - '.github/workflows/build-apk.yml'
 
 jobs:
   build:
@@ -13,19 +9,24 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.9'
 
-      - name: Unpack Android project
-        run: unzip -q MealPlanner-v3-Enhanced-UI.zip
+      - name: Unpack Meal Planner project
+        run: |
+          unzip -q MealPlanner-v3-Enhanced-UI.zip
+          echo "Project contents:"
+          find MealPlanner-v3 -maxdepth 3 -type f | sort
 
       - name: Build APK
         working-directory: MealPlanner-v3
